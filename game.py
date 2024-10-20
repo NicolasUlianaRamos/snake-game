@@ -53,6 +53,30 @@ def reiniciar_jogo():
     
     morreu = False
 
+def morrer():
+    global morreu  # Permite modificar a variável global
+    fonte2 = pygame.font.SysFont('arial', 20, True, True)
+    mensagem = f'Game over! Pressione a tecla R para jogar novamente, {pontos}'
+    texto_formatado = fonte2.render(mensagem, True, (0,0,0))
+    ret_texto = texto_formatado.get_rect()
+
+    morreu = True
+    while morreu:
+        tela.fill((255, 255, 255))
+
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
+                exit()
+            if event.type == KEYDOWN:
+                if event.key == K_r:
+                    reiniciar_jogo()
+                    morreu = False  # Sai do loop ao reiniciar o jogo
+
+        ret_texto.center = (largura // 2, altura // 2)
+        tela.blit(texto_formatado, ret_texto)
+        pygame.display.update()
+
 
 while True:
     relogio.tick(30)
@@ -65,25 +89,25 @@ while True:
             exit()
         
         if event.type == KEYDOWN:
-            if event.key == K_a:
+            if event.key == K_a or event.key == K_LEFT:
                 if x_controle == velocidade:
                     pass
                 else:
                     x_controle = -velocidade
                     y_controle = 0
-            if event.key == K_d:
+            if event.key == K_d or event.key == K_RIGHT:
                 if x_controle == -velocidade:
                     pass
                 else:
                     x_controle = velocidade
                     y_controle = 0
-            if event.key == K_w:
+            if event.key == K_w or event.key == K_UP:
                 if y_controle == velocidade:
                     pass
                 else:
                     x_controle = 0
                     y_controle = -velocidade
-            if event.key == K_s:
+            if event.key == K_s or event.key == K_DOWN:
                 if y_controle == -velocidade:
                     pass
                 else: 
@@ -109,35 +133,16 @@ while True:
     lista_cobra.append(lista_cabeca)
 
     if lista_cobra.count(lista_cabeca) > 1:
-        fonte2 = pygame.font.SysFont('arial', 20, True, True)
-        mensagem = 'Game over! Pressione a tecla R para jogar novamente'
-        texto_formatado = fonte2.render(mensagem, True, (0,0,0))
-        ret_texto = texto_formatado.get_rect()
-
-        morreu = True
-        while morreu:
-            tela.fill((255, 255, 255))
-
-            for event in pygame.event.get():
-                if event.type == QUIT:
-                    pygame.quit()
-                    exit()
-                if event.type == KEYDOWN:
-                    if event.key == K_r:
-                        reiniciar_jogo()
-
-            ret_texto.center = (largura//2, altura//2)
-            tela.blit(texto_formatado, ret_texto)
-            pygame.display.update()
+        morrer()
     
     if x_cobra > largura:
-        x_cobra = 0
+        morrer()
     if x_cobra < 0:
-        x_cobra = largura
+        morrer()
     if y_cobra < 0:
-        y_cobra = altura
+        morrer()
     if y_cobra > altura:
-        y_cobra = 0
+        morrer()
 
     if len(lista_cobra) > comprimento_inicial:
         del lista_cobra[0]
